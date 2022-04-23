@@ -1,4 +1,5 @@
 const http = require("http");
+const fs = require("fs");
 const url = require("url");
 
 const port = 3000;
@@ -11,11 +12,18 @@ const server = http.createServer((req, res) => {
   res.setHeader("Content-Type", "text/html");
 
   if (!name) {
-    res.end(
-      "<h1>Preencha seu nome:</h1><form method='GET'><input type='text' name='name'/><input type='submit' value='Enviar'></form>"
-    );
+    fs.readFile("index.html", function (err, data) {
+      res.writeHead(200, { "Content-Type": "text/html" });
+      res.write(data);
+      return res.end();
+    });
   } else {
-    res.end(`<h1>Seja bem-vindo ${name}!</h1>`);
+    fs.writeFile("arquivo.txt", name, function (err, data) {
+      res.writeHead(302, {
+        Location: "/",
+      });
+      return res.end();
+    });
   }
 });
 
